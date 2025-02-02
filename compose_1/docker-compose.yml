@@ -1,0 +1,35 @@
+version: '3.9'
+services:
+  wordpress:
+    image: wordpress:latest
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: balankus
+      WORDPRESS_DB_PASSWORD: 135246bba
+      WORDPRESS_DB_NAME: dacms_system_db
+    volumes:
+      - wordpress_data:/var/www/html
+    networks:
+      - network_1
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: bba135246
+      MYSQL_DATABASE: dacms_system_db
+      MYSQL_USER: balankus
+      MYSQL_PASSWORD: 135246bba
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - network_1
+
+volumes:
+  wordpress_data:
+  db_data:
+
+networks:
+  network_1:
+    external: true

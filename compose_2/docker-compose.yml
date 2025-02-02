@@ -1,0 +1,52 @@
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: balankus
+      POSTGRES_PASSWORD: 135246bba
+      POSTGRES_DB: my_database
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - network_1
+
+  mongodb:
+    image: mongo:latest
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - network_1
+
+  redis:
+    image: redis:latest
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    networks:
+      - network_1
+
+  python_sql_writer:
+    build:
+      context: ./python_sql_writer
+    depends_on:
+      - postgres
+      - mongodb
+      - redis
+    networks:
+      - network_1
+
+  python_wp_editor:
+    build:
+      context: ./python_wp_editor
+    environment:
+      WP_URL: "http://wordpress:8080/wp-json/wp/v2/posts/1"
+    networks:
+      - network_1
+
+volumes:
+  postgres_data:
+  mongo_data:
+  redis_data:
+networks:
+  network_1:
+    external: true
